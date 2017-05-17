@@ -7,87 +7,11 @@
 
 # 2012 Simon Meggle, <simon.meggle@consol.de>
 
-# this program Is free software; you can redistribute it And/Or
-# modify it under the terms of the GNU General Public License
-# As published by the Free Software Foundation; either version 2
-# of the License, Or (at your Option) any later version.
-#
-# this program Is distributed In the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY Or FITNESS For A PARTICULAR PURPOSE. See the
-# GNU General Public License For more details.
-#
-# You should have received a copy of the GNU General Public License
-# along With this program; If Not, write To the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
-#
-# VERSION 0.16 
-#
-# Version history: 
-# 2015/05/29 - v0.16
-#		added properties to API query; improves execution speed. (Thanks to Natxo Asenjo) 
-# 2013/12/24 - v0.15
-# 		added parameter "match_snapshot_names" to also black/whiteliste snapshot names
-# 2013/12/12 - v0.14
-# 		fixed bug when there are no snapshots at all (thanks to Andreas Daubner, Christian Joy, James) 
-# 2013/04/26 - v0.13 
-#              	added parameter 'separator' to specify another msg separator than comma. (Thanks to Olaf Assmus).
-#                    Examples: 
-#                    --separator '<br>' : Nagios sees the whole output as a single line. All snapshots/VMs
-#                                         are displayed as well in service overview as in service details. 
-#                                         Each message gets its own line. 
-#                    --separator '\n'   : Nagios sees n lines. Only the first line is displayed in the service overview.
-#                                         All lines are displayed in the service details. 
-#                                         Each message gets its own line. 
-#              First Output line is now a summation of the badcount.
-# 2013/04/18 - v0.12 added black/whitelist function to exclude/filter VMs (thanks to Andi Seemueller)
-# 2012/10/29 - v0.11 initial commit
-#
-# command 'check_vmware_snapshots'
-#define command{
-#    command_name                   check_vmware_snapshots
-#    command_line                   $USER1$/check_vmware_snapshots.pl --server $HOSTADDRESS$ --username $ARG1$ --password $ARG2$ --mode $ARG3$ --critical $ARG4$ --warning $ARG5$ $ARG6$
-#}
-#
-# service
-# service 'Snapshot Age'
-#define service{
-#    service_description            Snapshot Age
-#    check_command                  check_vmware_snapshots!$USER4$!$USER5$!age!7!30
-#    ...
-#    }
-#
-# service 'Snapshot Count'
-#define service{
-#    service_description            Snapshot Count
-#    check_command                  check_vmware_snapshots!$USER4$!$USER5$!count!1!2
-#    ...
-#    }
-#
-## service 'Snapshot Count for all DWH VMs 
-#define service{
-#    service_description            Snapshot Count for all DWH VMs
-#    check_command                  check_vmware_snapshots!$USER4$!$USER5$!count!1!2!--whitelist 'emDWH.*'
-#    ...
-#    }
-#
-## service 'Snapshot count with Snapshot blacklist'
-#define service{
-#    service_description            Snapshot Count without Dev Snapshots
-#    check_command                  check_vmware_snapshots!$USER4$!$USER5$!count!1!2!--blacklist 'snapshot_dev_.*' --match_snapshot_names=1
-#    ...
-#    }
-
-# Example Output 1:
-# CRITICAL - Snapshot "Before update" (VM: 'vmHDX03-1') is 18.2 days old
-# Snapshot "20120914_rc2" (VM: 'win2k8r2') is 32.9 days old
-#
-
 use strict;
 use warnings;
 use VMware::VIRuntime;
 use Date::Parse;
-use Nagios::Plugin;
+use Monitoring::Plugin;
 
 my %STATES = (
         0       => "ok",
@@ -98,7 +22,7 @@ my %STATES = (
 
 {
     no warnings 'redefine';
-    *Nagios::Plugin::Functions::get_shortname = sub {
+    *Monitoring::Plugin::Functions::get_shortname = sub {
         return undef;
     };
 }
@@ -108,7 +32,7 @@ my $perfdata_uom;
 my $ok_msg;
 my $nok_msg;
 
-my $np = Nagios::Plugin->new(
+my $np = Monitoring::Plugin->new(
     shortname => "",
     usage     => "",
 );

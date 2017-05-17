@@ -1,0 +1,21 @@
+ 2017/05/17 - v0.17
+        changed from Nagios::Plugin to Monitoring::Plugin
+ 2015/05/29 - v0.16
+		added properties to API query; improves execution speed. (Thanks to Natxo Asenjo) 
+ 2013/12/24 - v0.15
+ 		added parameter "match_snapshot_names" to also black/whiteliste snapshot names
+ 2013/12/12 - v0.14
+ 		fixed bug when there are no snapshots at all (thanks to Andreas Daubner, Christian Joy, James) 
+ 2013/04/26 - v0.13 
+              	added parameter 'separator' to specify another msg separator than comma. (Thanks to Olaf Assmus).
+                    Examples: 
+                    --separator '<br>' : Nagios sees the whole output as a single line. All snapshots/VMs
+                                         are displayed as well in service overview as in service details. 
+                                         Each message gets its own line. 
+                    --separator '\n'   : Nagios sees n lines. Only the first line is displayed in the service overview.
+                                         All lines are displayed in the service details. 
+                                         Each message gets its own line. 
+              First Output line is now a summation of the badcount.
+ 2013/04/18 - v0.12 added black/whitelist function to exclude/filter VMs (thanks to Andi Seemueller)
+ 2012/10/29 - v0.11 initial commit
+
