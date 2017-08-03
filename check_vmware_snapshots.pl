@@ -129,9 +129,17 @@ foreach my $vm_view ( @{$vms} ) {
     my $vm_name     = $vm_view->{name};
     my $vm_snapinfo = $vm_view->{snapshot};
 
+
+
     next unless defined $vm_snapinfo;
     next if (isblacklisted(\$blacklist,$vm_name ));
     next if (isnotwhitelisted(\$whitelist,$vm_name));
+
+    use Data::Dumper; 
+    print Dumper $vm_snapinfo->{rootSnapshotList}; 
+    exit; 
+
+
     if ( uc($mode) eq "AGE" ) {
         check_snapshot_age( $vm_name, $vm_snapinfo->{rootSnapshotList} );
     }
